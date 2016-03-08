@@ -90,8 +90,8 @@ export class SelectionController {
         } else {
           var idx = this.selected.indexOf(row);
           if(idx > -1){
-            this.body.onUncheck({rows: [ row ]});
             this.selected.splice(idx, 1);
+            this.body.onUnselect({rows: [ row ] });
           } else {
             if(this.options.multiSelectOnShift && this.selected.length === 1) {
               this.selected.splice(0, 1);

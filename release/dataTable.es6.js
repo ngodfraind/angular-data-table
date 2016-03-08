@@ -816,6 +816,7 @@ class SelectionController {
           var idx = this.selected.indexOf(row);
           if(idx > -1){
             this.selected.splice(idx, 1);
+            this.body.onUnselect({rows: [ row ] });
           } else {
             if(this.options.multiSelectOnShift && this.selected.length === 1) {
               this.selected.splice(0, 1);
@@ -1502,7 +1503,8 @@ function BodyDirective($timeout){
       onTreeToggle: '&',
       onSelect: '&',
       onRowClick: '&',
-      onRowDblClick: '&'
+      onRowDblClick: '&',
+      onUnselect: '&',
     },
     scope: true,
     template: `
@@ -2793,10 +2795,14 @@ class DataTableController {
     if(this.rows){
       var matches = this.selected.length === this.rows.length;
       this.selected.splice(0, this.selected.length);
+      var isChecked = false;
 
       if(!matches){
         this.selected.push(...this.rows);
+        isChecked = true;
       }
+
+      this.onHeaderCheckboxChanged({isChecked: isChecked});
     }
   }
 
@@ -2856,6 +2862,23 @@ class DataTableController {
     });
   }
 
+  /**
+   * Occurs when checkbox is clicked on.
+   * @param  {object} row
+   */
+  onCheckboxChanged(row, selected) {
+    console.log('click1');
+    this.onCheckboxChange({
+      row: row,
+      selected: selected
+    });
+  }
+
+  onUnselected(rows){
+    this.onUnselect({
+      rows: rows
+    });
+  }
 }
 
 function DataTableDirective($window, $timeout, $parse){
@@ -2874,7 +2897,9 @@ function DataTableDirective($window, $timeout, $parse){
       onTreeToggle: '&',
       onPage: '&',
       onRowClick: '&',
-      onRowDblClick: '&'
+      onRowDblClick: '&',
+      onHeaderCheckboxChanged: '&',
+      onUnselect: '&'
     },
     controllerAs: 'dt',
     template: function(element){
@@ -2892,6 +2917,7 @@ function DataTableDirective($window, $timeout, $parse){
                      ng-if="dt.options.headerHeight"
                      on-resize="dt.onResize(column, width)"
                      selected="dt.isAllRowsSelected()"
+                     on-header-checkbox-changed="dt.onHeaderCheckboxChanged(isChecked)"
                      on-sort="dt.onSorted()">
           </dt-header>
           <dt-body rows="dt.rows"
@@ -2904,7 +2930,9 @@ function DataTableDirective($window, $timeout, $parse){
                    column-widths="dt.columnWidths"
                    options="dt.options"
                    on-page="dt.onBodyPage(offset, size)"
-                   on-tree-toggle="dt.onTreeToggled(row, cell)">
+                   on-tree-toggle="dt.onTreeToggled(row, cell)"
+                   on-unselect="dt.onUnselect(rows)"
+                 >
            </dt-body>
           <dt-footer ng-if="dt.options.footerHeight"
                      ng-style="{ height: dt.options.footerHeight + 'px' }"

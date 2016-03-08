@@ -281,16 +281,6 @@ export class DataTableController {
   }
 
   /**
-   * Occurs when a row is unchecked
-   * @param  {object} rows
-   */
-  onUnchecked(rows){
-    this.onUncheck({
-      rows: rows
-    });
-  }
-
-  /**
    * Occurs when a row was click but may not be selected.
    * @param  {object} row
    */
@@ -307,6 +297,24 @@ export class DataTableController {
   onRowDblClicked(row){
     this.onRowDblClick({
       row: row
+    });
+  }
+
+  /**
+   * Occurs when checkbox is clicked on.
+   * @param  {object} row
+   */
+  onCheckboxChanged(row, selected) {
+    console.log('click1');
+    this.onCheckboxChange({
+      row: row,
+      selected: selected
+    });
+  }
+
+  onUnselected(rows){
+    this.onUnselect({
+      rows: rows
     });
   }
 }

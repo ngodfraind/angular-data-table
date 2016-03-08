@@ -16,13 +16,13 @@ export function DataTableDirective($window, $timeout, $parse){
       selected: '=?',
       expanded: '=?',
       onSelect: '&',
-      onUncheck: '&',
       onSort: '&',
       onTreeToggle: '&',
       onPage: '&',
       onRowClick: '&',
       onRowDblClick: '&',
-      onHeaderCheckboxChanged: '&'
+      onHeaderCheckboxChanged: '&',
+      onUnselect: '&'
     },
     controllerAs: 'dt',
     template: function(element){
@@ -48,13 +48,14 @@ export function DataTableDirective($window, $timeout, $parse){
                    expanded="dt.expanded"
                    columns="dt.columnsByPin"
                    on-select="dt.onSelected(rows)"
-                   on-uncheck="dt.onUnchecked(rows)"
                    on-row-click="dt.onRowClicked(row)"
                    on-row-dbl-click="dt.onRowDblClicked(row)"
                    column-widths="dt.columnWidths"
                    options="dt.options"
                    on-page="dt.onBodyPage(offset, size)"
-                   on-tree-toggle="dt.onTreeToggled(row, cell)">
+                   on-tree-toggle="dt.onTreeToggled(row, cell)"
+                   on-unselect="dt.onUnselect(rows)"
+                 >
            </dt-body>
           <dt-footer ng-if="dt.options.footerHeight"
                      ng-style="{ height: dt.options.footerHeight + 'px' }"
