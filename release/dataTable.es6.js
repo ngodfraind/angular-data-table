@@ -1245,7 +1245,7 @@ class BodyController{
 
     if(this.options.selectable){
       if(this.options.multiSelect){
-        selected = this.selected.indexOf(row) > -1;
+        selected = JSON.stringify(this.selected).indexOf(JSON.stringify(row)) > -1;
       } else {
         selected = this.selected === row;
       }
@@ -2795,12 +2795,17 @@ class DataTableController {
   onHeaderCheckboxChange(){
     if(this.rows){
       var matches = this.selected.length === this.rows.length;
-      this.selected.splice(0, this.selected.length);
-      var isChecked = false;
+      console.log(this.selected.length);
+      console.log(this.rows.length);
 
       if(!matches){
+        console.log('push');
         this.selected.push(...this.rows);
-        isChecked = true;
+        var isChecked = true;
+      } else {
+        console.log('splice');
+        this.selected.splice(0, this.rows.length);
+        var isChecked = false;
       }
 
       this.onHeaderCheckboxChanged({isChecked: isChecked});
@@ -2812,7 +2817,8 @@ class DataTableController {
    * @return {Boolean} if all selected
    */
   isAllRowsSelected(){
-    if(this.rows) return false;
+    console.log(this.selected);
+    console.log(this.rows);
     return this.selected.length === this.rows.length;
   }
 
@@ -2875,7 +2881,6 @@ class DataTableController {
   }
 
   onUnselected(rows){
-    console.log(rows);
     this.onUnselect({
       rows: rows
     });

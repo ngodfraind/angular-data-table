@@ -1016,7 +1016,7 @@
 
         if (this.options.selectable) {
           if (this.options.multiSelect) {
-            selected = this.selected.indexOf(row) > -1;
+            selected = JSON.stringify(this.selected).indexOf(JSON.stringify(row)) > -1;
           } else {
             selected = this.selected === row;
           }
@@ -2194,14 +2194,19 @@
       value: function onHeaderCheckboxChange() {
         if (this.rows) {
           var matches = this.selected.length === this.rows.length;
-          this.selected.splice(0, this.selected.length);
-          var isChecked = false;
+          console.log(this.selected.length);
+          console.log(this.rows.length);
 
           if (!matches) {
             var _selected;
 
+            console.log('push');
             (_selected = this.selected).push.apply(_selected, _toConsumableArray(this.rows));
-            isChecked = true;
+            var isChecked = true;
+          } else {
+            console.log('splice');
+            this.selected.splice(0, this.rows.length);
+            var isChecked = false;
           }
 
           this.onHeaderCheckboxChanged({ isChecked: isChecked });
@@ -2210,7 +2215,8 @@
     }, {
       key: "isAllRowsSelected",
       value: function isAllRowsSelected() {
-        if (this.rows) return false;
+        console.log(this.selected);
+        console.log(this.rows);
         return this.selected.length === this.rows.length;
       }
     }, {
@@ -2258,7 +2264,6 @@
     }, {
       key: "onUnselected",
       value: function onUnselected(rows) {
-        console.log(rows);
         this.onUnselect({
           rows: rows
         });
