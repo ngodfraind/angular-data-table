@@ -305,7 +305,6 @@ export class DataTableController {
    * @param  {object} row
    */
   onCheckboxChanged(row, selected) {
-    console.log('click1');
     this.onCheckboxChange({
       row: row,
       selected: selected
@@ -313,6 +312,7 @@ export class DataTableController {
   }
 
   onUnselected(rows){
+    console.log(rows);
     this.onUnselect({
       rows: rows
     });

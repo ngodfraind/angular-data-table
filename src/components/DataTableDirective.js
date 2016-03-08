@@ -54,7 +54,7 @@ export function DataTableDirective($window, $timeout, $parse){
                    options="dt.options"
                    on-page="dt.onBodyPage(offset, size)"
                    on-tree-toggle="dt.onTreeToggled(row, cell)"
-                   on-unselect="dt.onUnselect(rows)"
+                   on-unselect="dt.onUnselected(rows)"
                  >
            </dt-body>
           <dt-footer ng-if="dt.options.footerHeight"

@@ -632,8 +632,8 @@ var SelectionController = (function () {
           } else {
             var idx = this.selected.indexOf(row);
             if (idx > -1) {
-              this.selected.splice(idx, 1);
               this.body.onUnselect({ rows: [row] });
+              this.selected.splice(idx, 1);
             } else {
               if (this.options.multiSelectOnShift && this.selected.length === 1) {
                 this.selected.splice(0, 1);
@@ -2241,7 +2241,6 @@ var DataTableController = (function () {
   }, {
     key: "onCheckboxChanged",
     value: function onCheckboxChanged(row, selected) {
-      console.log('click1');
       this.onCheckboxChange({
         row: row,
         selected: selected
@@ -2250,6 +2249,7 @@ var DataTableController = (function () {
   }, {
     key: "onUnselected",
     value: function onUnselected(rows) {
+      console.log(rows);
       this.onUnselect({
         rows: rows
       });
@@ -2285,7 +2285,7 @@ function DataTableDirective($window, $timeout, $parse) {
           id = ObjectId();
       DataTableService.saveColumns(id, columns);
 
-      return "<div class=\"dt\" ng-class=\"dt.tableCss()\" data-column-id=\"" + id + "\">\n          <dt-header options=\"dt.options\"\n                     on-checkbox-change=\"dt.onHeaderCheckboxChange()\"\n                     columns=\"dt.columnsByPin\"\n                     column-widths=\"dt.columnWidths\"\n                     ng-if=\"dt.options.headerHeight\"\n                     on-resize=\"dt.onResize(column, width)\"\n                     selected=\"dt.isAllRowsSelected()\"\n                     on-header-checkbox-changed=\"dt.onHeaderCheckboxChanged(isChecked)\"\n                     on-sort=\"dt.onSorted()\">\n          </dt-header>\n          <dt-body rows=\"dt.rows\"\n                   selected=\"dt.selected\"\n                   expanded=\"dt.expanded\"\n                   columns=\"dt.columnsByPin\"\n                   on-select=\"dt.onSelected(rows)\"\n                   on-row-click=\"dt.onRowClicked(row)\"\n                   on-row-dbl-click=\"dt.onRowDblClicked(row)\"\n                   column-widths=\"dt.columnWidths\"\n                   options=\"dt.options\"\n                   on-page=\"dt.onBodyPage(offset, size)\"\n                   on-tree-toggle=\"dt.onTreeToggled(row, cell)\"\n                   on-unselect=\"dt.onUnselect(rows)\"\n                 >\n           </dt-body>\n          <dt-footer ng-if=\"dt.options.footerHeight\"\n                     ng-style=\"{ height: dt.options.footerHeight + 'px' }\"\n                     on-page=\"dt.onFooterPage(offset, size)\"\n                     paging=\"dt.options.paging\">\n           </dt-footer>\n        </div>";
+      return "<div class=\"dt\" ng-class=\"dt.tableCss()\" data-column-id=\"" + id + "\">\n          <dt-header options=\"dt.options\"\n                     on-checkbox-change=\"dt.onHeaderCheckboxChange()\"\n                     columns=\"dt.columnsByPin\"\n                     column-widths=\"dt.columnWidths\"\n                     ng-if=\"dt.options.headerHeight\"\n                     on-resize=\"dt.onResize(column, width)\"\n                     selected=\"dt.isAllRowsSelected()\"\n                     on-header-checkbox-changed=\"dt.onHeaderCheckboxChanged(isChecked)\"\n                     on-sort=\"dt.onSorted()\">\n          </dt-header>\n          <dt-body rows=\"dt.rows\"\n                   selected=\"dt.selected\"\n                   expanded=\"dt.expanded\"\n                   columns=\"dt.columnsByPin\"\n                   on-select=\"dt.onSelected(rows)\"\n                   on-row-click=\"dt.onRowClicked(row)\"\n                   on-row-dbl-click=\"dt.onRowDblClicked(row)\"\n                   column-widths=\"dt.columnWidths\"\n                   options=\"dt.options\"\n                   on-page=\"dt.onBodyPage(offset, size)\"\n                   on-tree-toggle=\"dt.onTreeToggled(row, cell)\"\n                   on-unselect=\"dt.onUnselected(rows)\"\n                 >\n           </dt-body>\n          <dt-footer ng-if=\"dt.options.footerHeight\"\n                     ng-style=\"{ height: dt.options.footerHeight + 'px' }\"\n                     on-page=\"dt.onFooterPage(offset, size)\"\n                     paging=\"dt.options.paging\">\n           </dt-footer>\n        </div>";
     },
     compile: function compile(tElem, tAttrs) {
       return {

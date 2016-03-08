@@ -90,8 +90,9 @@ export class SelectionController {
         } else {
           var idx = this.selected.indexOf(row);
           if(idx > -1){
-            this.selected.splice(idx, 1);
+            //this must be before the splice otherwise it'll already be removed.
             this.body.onUnselect({rows: [ row ] });
+            this.selected.splice(idx, 1);
           } else {
             if(this.options.multiSelectOnShift && this.selected.length === 1) {
               this.selected.splice(0, 1);

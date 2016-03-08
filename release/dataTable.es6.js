@@ -815,8 +815,9 @@ class SelectionController {
         } else {
           var idx = this.selected.indexOf(row);
           if(idx > -1){
-            this.selected.splice(idx, 1);
+            //this must be before the splice otherwise it'll already be removed.
             this.body.onUnselect({rows: [ row ] });
+            this.selected.splice(idx, 1);
           } else {
             if(this.options.multiSelectOnShift && this.selected.length === 1) {
               this.selected.splice(0, 1);
@@ -2867,7 +2868,6 @@ class DataTableController {
    * @param  {object} row
    */
   onCheckboxChanged(row, selected) {
-    console.log('click1');
     this.onCheckboxChange({
       row: row,
       selected: selected
@@ -2875,6 +2875,7 @@ class DataTableController {
   }
 
   onUnselected(rows){
+    console.log(rows);
     this.onUnselect({
       rows: rows
     });
@@ -2931,7 +2932,7 @@ function DataTableDirective($window, $timeout, $parse){
                    options="dt.options"
                    on-page="dt.onBodyPage(offset, size)"
                    on-tree-toggle="dt.onTreeToggled(row, cell)"
-                   on-unselect="dt.onUnselect(rows)"
+                   on-unselect="dt.onUnselected(rows)"
                  >
            </dt-body>
           <dt-footer ng-if="dt.options.footerHeight"
