@@ -22,6 +22,7 @@ export class DataTableController {
 
     // set scope to the parent
     this.options.$outer = $scope.$parent;
+    this.headerSelected = false;
 
     $scope.$watch('dt.options.columns', (newVal, oldVal) => {
       this.transposeColumnDefaults();
@@ -236,11 +237,9 @@ export class DataTableController {
       console.log(this.rows.length);
 
       if(!matches){
-        console.log('push');
         this.selected.push(...this.rows);
         var isChecked = true;
       } else {
-        console.log('splice');
         this.selected.splice(0, this.rows.length);
         var isChecked = false;
       }
@@ -254,9 +253,20 @@ export class DataTableController {
    * @return {Boolean} if all selected
    */
   isAllRowsSelected(){
-    console.log(this.selected);
-    console.log(this.rows);
-    return this.selected.length === this.rows.length;
+    if (!this.selected || !this.rows) return false;
+
+    return this.options.paging.count ? 
+      this.selected.length === parseInt(this.options.paging.count): 
+      this.selected.length === this.rows.length;
+  }
+
+  onRowsChange() {
+    this.setIsAllRowsSelected();
+  }
+
+  setIsAllRowsSelected(){
+    this.headerSelected = this.isAllRowsSelected();
+    console.log(this.headerSelected);
   }
 
   /**
@@ -284,6 +294,8 @@ export class DataTableController {
     this.onSelect({
       rows: rows
     });
+
+    this.setIsAllRowsSelected();
   }
 
   /**
@@ -317,9 +329,15 @@ export class DataTableController {
     });
   }
 
+  /**
+   * Occurs when checkbox is unselected.
+   * @param  {object} row
+   */
   onUnselected(rows){
     this.onUnselect({
       rows: rows
     });
+
+    this.setIsAllRowsSelected();
   }
 }

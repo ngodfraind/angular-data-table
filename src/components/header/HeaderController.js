@@ -91,5 +91,4 @@ export class HeaderController {
       width: width
     });
   }
-
 };

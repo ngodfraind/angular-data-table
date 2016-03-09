@@ -18,6 +18,7 @@ export function BodyDirective($timeout){
       onRowClick: '&',
       onRowDblClick: '&',
       onUnselect: '&',
+      onRowsChange: '&'
     },
     scope: true,
     template: `

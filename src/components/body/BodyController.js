@@ -12,6 +12,7 @@ export class BodyController{
   constructor($scope, $timeout){
     this.$scope = $scope;
     this.tempRows = [];
+    this.parent = $scope.$parent;
 
     this.treeColumn = this.options.columns.find((c) => {
       return c.isTreeColumn;
@@ -88,6 +89,8 @@ export class BodyController{
         }
       }
     }
+    
+    this.onRowsChange();
   }
 
   /**
@@ -234,8 +237,9 @@ export class BodyController{
 
     if(this.options.selectable){
       if(this.options.multiSelect){
-        selected = this.selected.indexOf(row) > -1;
-        //selected = JSON.stringify(this.selected).indexOf(JSON.stringify(row)) > -1;
+        //selected = this.selected.indexOf(row) > -1;
+        //what the actual fuck
+        selected = JSON.stringify(this.selected).indexOf(JSON.stringify(row)) > -1;
       } else {
         selected = this.selected === row;
       }

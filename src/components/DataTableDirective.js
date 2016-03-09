@@ -39,11 +39,12 @@ export function DataTableDirective($window, $timeout, $parse){
                      column-widths="dt.columnWidths"
                      ng-if="dt.options.headerHeight"
                      on-resize="dt.onResize(column, width)"
-                     selected="dt.isAllRowsSelected()"
+                     selected="dt.headerSelected"
                      on-header-checkbox-changed="dt.onHeaderCheckboxChanged(isChecked)"
                      on-sort="dt.onSorted()">
           </dt-header>
           <dt-body rows="dt.rows"
+                   on-rows-change="dt.onRowsChange()"
                    selected="dt.selected"
                    expanded="dt.expanded"
                    columns="dt.columnsByPin"

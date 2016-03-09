@@ -1023,6 +1023,7 @@ class BodyController{
   constructor($scope, $timeout){
     this.$scope = $scope;
     this.tempRows = [];
+    this.parent = $scope.$parent;
 
     this.treeColumn = this.options.columns.find((c) => {
       return c.isTreeColumn;
@@ -1099,6 +1100,8 @@ class BodyController{
         }
       }
     }
+    
+    this.onRowsChange();
   }
 
   /**
@@ -1245,6 +1248,8 @@ class BodyController{
 
     if(this.options.selectable){
       if(this.options.multiSelect){
+        //selected = this.selected.indexOf(row) > -1;
+        //what the actual fuck
         selected = JSON.stringify(this.selected).indexOf(JSON.stringify(row)) > -1;
       } else {
         selected = this.selected === row;
@@ -1506,6 +1511,7 @@ function BodyDirective($timeout){
       onRowClick: '&',
       onRowDblClick: '&',
       onUnselect: '&',
+      onRowsChange: '&'
     },
     scope: true,
     template: `
@@ -1816,7 +1822,6 @@ class HeaderController {
       width: width
     });
   }
-
 }
 
 function HeaderDirective($timeout){
@@ -1831,11 +1836,11 @@ function HeaderDirective($timeout){
       columnWidths: '=',
       onSort: '&',
       onResize: '&',
-      onCheckboxChange: '&'
+      onCheckboxChange: '&',
+      selected: '='
     },
     template: `
       <div class="dt-header" ng-style="header.styles()">
-
         <div class="dt-header-inner" ng-style="header.innerStyles()">
           <div class="dt-row-left"
                ng-style="header.stylesByGroup('left')"
@@ -1849,7 +1854,7 @@ function HeaderDirective($timeout){
               options="header.options"
               sort-type="header.options.sortType"
               on-resize="header.onResized(column, width)"
-              selected="header.isSelected()"
+              selected="header.selected"
               column="column">
             </dt-header-cell>
           </div>
@@ -1862,7 +1867,7 @@ function HeaderDirective($timeout){
               on-checkbox-change="header.onCheckboxChanged()"
               on-sort="header.onSorted(column)"
               sort-type="header.options.sortType"
-              selected="header.isSelected()"
+              selected="header.selected"
               on-resize="header.onResized(column, width)"
               options="header.options"
               column="column">
@@ -1878,7 +1883,7 @@ function HeaderDirective($timeout){
               on-checkbox-change="header.onCheckboxChanged()"
               on-sort="header.onSorted(column)"
               sort-type="header.options.sortType"
-              selected="header.isSelected()"
+              selected="header.selected"
               on-resize="header.onResized(column, width)"
               options="header.options"
               column="column">
@@ -2585,6 +2590,7 @@ class DataTableController {
 
     // set scope to the parent
     this.options.$outer = $scope.$parent;
+    this.headerSelected = false;
 
     $scope.$watch('dt.options.columns', (newVal, oldVal) => {
       this.transposeColumnDefaults();
@@ -2799,11 +2805,9 @@ class DataTableController {
       console.log(this.rows.length);
 
       if(!matches){
-        console.log('push');
         this.selected.push(...this.rows);
         var isChecked = true;
       } else {
-        console.log('splice');
         this.selected.splice(0, this.rows.length);
         var isChecked = false;
       }
@@ -2817,9 +2821,20 @@ class DataTableController {
    * @return {Boolean} if all selected
    */
   isAllRowsSelected(){
-    console.log(this.selected);
-    console.log(this.rows);
-    return this.selected.length === this.rows.length;
+    if (!this.selected || !this.rows) return false;
+
+    return this.options.paging.count ? 
+      this.selected.length === parseInt(this.options.paging.count): 
+      this.selected.length === this.rows.length;
+  }
+
+  onRowsChange() {
+    this.setIsAllRowsSelected();
+  }
+
+  setIsAllRowsSelected(){
+    this.headerSelected = this.isAllRowsSelected();
+    console.log(this.headerSelected);
   }
 
   /**
@@ -2847,6 +2862,8 @@ class DataTableController {
     this.onSelect({
       rows: rows
     });
+
+    this.setIsAllRowsSelected();
   }
 
   /**
@@ -2880,10 +2897,16 @@ class DataTableController {
     });
   }
 
+  /**
+   * Occurs when checkbox is unselected.
+   * @param  {object} row
+   */
   onUnselected(rows){
     this.onUnselect({
       rows: rows
     });
+
+    this.setIsAllRowsSelected();
   }
 }
 
@@ -2922,11 +2945,12 @@ function DataTableDirective($window, $timeout, $parse){
                      column-widths="dt.columnWidths"
                      ng-if="dt.options.headerHeight"
                      on-resize="dt.onResize(column, width)"
-                     selected="dt.isAllRowsSelected()"
+                     selected="dt.headerSelected"
                      on-header-checkbox-changed="dt.onHeaderCheckboxChanged(isChecked)"
                      on-sort="dt.onSorted()">
           </dt-header>
           <dt-body rows="dt.rows"
+                   on-rows-change="dt.onRowsChange()"
                    selected="dt.selected"
                    expanded="dt.expanded"
                    columns="dt.columnsByPin"
