@@ -89,20 +89,18 @@ function SizeSelectorDirective() {
   return {
     restrict: 'E',
     controller: SizeSelectorController,
-    controllerAs: 'size',
+    controllerAs: 'sizeSelector',
     bindToController: {
       options: '=',
       onPage: '&'
     },
-    template: "\n      <select\n        ng-change=\"size.onChange()\"\n        ng-model=\"size.options.paging.size\"\n        ng-init=\"size.options.paging.size\"\n        ng-options=\"value * 1 as value for (key, value) in size.options.sizes\"\n      >\n      </select>\n      ",
+    template: "\n      <select\n        ng-change=\"sizeSelector.onChange()\"\n        ng-model=\"sizeSelector.options.paging.size\"\n        ng-init=\"sizeSelector.options.paging.size\"\n        ng-options=\"value * 1 as value for (key, value) in sizeSelector.options.sizes\"\n      >\n      </select>\n      ",
     replace: true
   };
 }
 
 var ActionController = function ActionController() {
   _classCallCheck(this, ActionController);
-
-  console.log(this.options.sizes);
 };
 
 function ActionDirective() {
@@ -114,7 +112,7 @@ function ActionDirective() {
     bindToController: {
       options: '='
     },
-    template: "<dt-size-selector\n        ng-if=\"dt.options.sizes.length > 1\"\n        options=\"dt.options\"\n      >\n      </dt-size-selector>",
+    template: "<dt-size-selector\n        ng-if=\"dt.options.sizes\"\n        options=\"dt.options\"\n      >\n      ",
     replace: true
   };
 }
@@ -1145,7 +1143,7 @@ var BodyController = (function () {
 
       this.tempRows.splice(0, indexes.last - indexes.first);
 
-      while (rowIndex < indexes.last && rowIndex < this.count) {
+      while (rowIndex < indexes.last && rowIndex < this.count && this.tempRows.length > 0) {
         var row = temp[rowIndex];
         if (row) {
           row.$$index = rowIndex;
@@ -2242,8 +2240,7 @@ var DataTableController = (function () {
   }, {
     key: "onSizePage",
     value: function onSizePage(offset, size) {
-      this.rows = [];
-
+      this.rows = undefined;
       this.onPage({
         offset: offset,
         size: size
@@ -2292,7 +2289,6 @@ var DataTableController = (function () {
     key: "setIsAllRowsSelected",
     value: function setIsAllRowsSelected() {
       this.headerSelected = this.isAllRowsSelected();
-      console.log(this.headerSelected);
     }
   }, {
     key: "onResize",

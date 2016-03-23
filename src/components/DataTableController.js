@@ -222,7 +222,7 @@ export class DataTableController {
    */
   onSizePage(offset, size){
     //if I remove this, it's going to be broken
-    this.rows = []
+    this.rows = undefined
     this.onPage({
       offset: offset,
       size: size
@@ -278,7 +278,6 @@ export class DataTableController {
 
   setIsAllRowsSelected(){
     this.headerSelected = this.isAllRowsSelected();
-    console.log(this.headerSelected);
   }
 
   /**

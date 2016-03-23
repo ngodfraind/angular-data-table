@@ -57,17 +57,17 @@ function SizeSelectorDirective() {
   return {
     restrict: 'E',
     controller: SizeSelectorController,
-    controllerAs: 'size',
+    controllerAs: 'sizeSelector',
     bindToController: {
       options: '=',
       onPage: '&'
     },
     template: `
       <select
-        ng-change="size.onChange()"
-        ng-model="size.options.paging.size"
-        ng-init="size.options.paging.size"
-        ng-options="value * 1 as value for (key, value) in size.options.sizes"
+        ng-change="sizeSelector.onChange()"
+        ng-model="sizeSelector.options.paging.size"
+        ng-init="sizeSelector.options.paging.size"
+        ng-options="value * 1 as value for (key, value) in sizeSelector.options.sizes"
       >
       </select>
       `,
@@ -77,7 +77,6 @@ function SizeSelectorDirective() {
 
 class ActionController {
     constructor() {
-        console.log(this.options.sizes)
     }
 }
 
@@ -92,10 +91,10 @@ function ActionDirective(){
     },
     template:
       `<dt-size-selector
-        ng-if="dt.options.sizes.length > 1"
+        ng-if="dt.options.sizes"
         options="dt.options"
       >
-      </dt-size-selector>`,
+      `,
     replace: true
   };
 }
@@ -1148,7 +1147,7 @@ class BodyController{
         }
       }
     }
-    
+
     this.onRowsChange();
   }
 
@@ -1381,7 +1380,7 @@ class BodyController{
     // slice out the old rows so we don't have duplicates
     this.tempRows.splice(0, indexes.last - indexes.first);
 
-    while (rowIndex < indexes.last && rowIndex < this.count) {
+    while (rowIndex < indexes.last && rowIndex < this.count && this.tempRows.length > 0) {
       var row = temp[rowIndex];
       if(row){
         row.$$index = rowIndex;
@@ -2837,8 +2836,8 @@ class DataTableController {
    * @param  {size}
    */
   onSizePage(offset, size){
-    this.rows = []
-    //this.calculatePageSize()
+    //if I remove this, it's going to be broken
+    this.rows = undefined
     this.onPage({
       offset: offset,
       size: size
@@ -2894,7 +2893,6 @@ class DataTableController {
 
   setIsAllRowsSelected(){
     this.headerSelected = this.isAllRowsSelected();
-    console.log(this.headerSelected);
   }
 
   /**
