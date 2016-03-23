@@ -45,7 +45,6 @@ class SizeSelectorController {
 
     onChange() {
         this.options.paging.offset = 0
-
         this.onPage({
           offset: this.options.paging.offset,
           size: this.options.paging.size
@@ -73,30 +72,6 @@ function SizeSelectorDirective() {
       `,
     replace: true
   }
-}
-
-constructor() {
-class ActionController {
-    }
-}
-
-function ActionDirective(){
-  return {
-    restrict: 'E',
-    controller: ActionController,
-    controllerAs: 'action',
-    scope: true,
-    bindToController: {
-      options: '='
-    },
-    template:
-      `<dt-size-selector
-        ng-if="dt.options.sizes"
-        options="dt.options"
-      >
-      `,
-    replace: true
-  };
 }
 
 class PagerController {
@@ -480,7 +455,7 @@ var prefix = (function () {
 /**
  * Converts strings from something to camel case
  * http://stackoverflow.com/questions/10425287/convert-dash-separated-string-to-camelcase
- * @param  {string} str
+ * @param  {string} str 
  * @return {string} camel case string
  */
 function CamelCase(str) {
@@ -591,8 +566,8 @@ function GroupRowDirective(){
 
 /**
  * Returns a deep object given a string. zoo['animal.type']
- * @param {object} obj
- * @param {string} path
+ * @param {object} obj  
+ * @param {string} path 
  */
 function DeepValueGetter(obj, path) {
   if(!obj || !path) return obj;
@@ -602,10 +577,10 @@ function DeepValueGetter(obj, path) {
 
   if(split.length){
     for(var i=0, len=split.length; i < len; i++) {
-      current = current[split[i]];
+      current = current[split[i]]; 
     }
   }
-
+  
   return current;
 }
 
@@ -821,7 +796,7 @@ class SelectionController {
 
     this.body.onRowClick({ row: row });
   }
-
+  
   /**
    * Handler for the row double click event
    * @param  {object} event
@@ -1389,7 +1364,7 @@ class BodyController{
       idx++;
       rowIndex++;
     }
-    
+
     this.options.internal.styleTranslator.update(this.tempRows);
 
     return this.tempRows;
@@ -1562,9 +1537,9 @@ function BodyDirective($timeout){
     },
     scope: true,
     template: `
-      <div
-        class="progress-linear"
-        role="progressbar"
+      <div 
+        class="progress-linear" 
+        role="progressbar" 
         ng-show="body.options.paging.loadingIndicator">
         <div class="container">
           <div class="bar"></div>
@@ -1574,7 +1549,7 @@ function BodyDirective($timeout){
         <dt-scroller class="dt-body-scroller">
           <dt-group-row ng-repeat-start="r in body.tempRows track by $index"
                         ng-if="r.group"
-                        ng-style="body.groupRowStyles(r)"
+                        ng-style="body.groupRowStyles(r)" 
                         options="body.options"
                         on-group-toggle="body.onGroupToggle(group)"
                         expanded="body.getRowExpanded(r)"
@@ -1601,11 +1576,11 @@ function BodyDirective($timeout){
                   ng-style="body.rowStyles(r)">
           </dt-row>
         </dt-scroller>
-        <div ng-if="body.rows && !body.rows.length"
-             class="empty-row"
+        <div ng-if="body.rows && !body.rows.length" 
+             class="empty-row" 
              ng-bind="::body.options.emptyMessage">
        </div>
-       <div ng-if="body.rows === undefined"
+       <div ng-if="body.rows === undefined" 
              class="loading-row"
              ng-bind="::body.options.loadingMessage">
         </div>
@@ -2100,7 +2075,7 @@ function ResizableDirective($document, $timeout){
 
       function mousemove(event) {
         event = event.originalEvent || event;
-
+        
         var width = parent[0].scrollWidth,
             movementX = event.movementX || event.mozMovementX || (event.screenX - prevScreenX),
             newWidth = width + (movementX || 0);
@@ -2459,8 +2434,8 @@ function ForceFillColumnWidths(allColumns, expectedWidth, startIdx){
 
 /**
  * Returns the widths of all group sets of a column
- * @param {object} groups
- * @param {array} all
+ * @param {object} groups 
+ * @param {array} all 
  */
 function ColumnGroupWidths(groups, all){
   return {
@@ -2998,42 +2973,47 @@ function DataTableDirective($window, $timeout, $parse){
 
       return `
           <div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
-          <dt-action
+              <div class="panel-body container row">
+                  <dt-size-selector
+                    ng-if="dt.options.sizes"
                     options="dt.options"
+                    class="form-control input-sm col-sm-2"
                     on-page="dt.onSizePage(offset, size)"
-          >
-          </dt-action>
-          <dt-header options="dt.options"
-                    on-checkbox-change="dt.onHeaderCheckboxChange()"
-                    columns="dt.columnsByPin"
-                    column-widths="dt.columnWidths"
-                    ng-if="dt.options.headerHeight"
-                    on-resize="dt.onResize(column, width)"
-                    selected="dt.headerSelected"
-                    on-header-checkbox-changed="dt.onHeaderCheckboxChanged(isChecked)"
-                    on-sort="dt.onSorted()">
-          </dt-header>
-          <dt-body rows="dt.rows"
-                   on-rows-change="dt.onRowsChange()"
-                   selected="dt.selected"
-                   expanded="dt.expanded"
-                   columns="dt.columnsByPin"
-                   on-select="dt.onSelected(rows)"
-                   on-row-click="dt.onRowClicked(row)"
-                   on-row-dbl-click="dt.onRowDblClicked(row)"
-                   column-widths="dt.columnWidths"
-                   options="dt.options"
-                   on-page="dt.onBodyPage(offset, size)"
-                   on-tree-toggle="dt.onTreeToggled(row, cell)"
-                   on-unselect="dt.onUnselected(rows)"
-                 >
-           </dt-body>
-          <dt-footer ng-if="dt.options.footerHeight"
-                     ng-style="{ height: dt.options.footerHeight + 'px' }"
-                     on-page="dt.onFooterPage(offset, size)"
-                     paging="dt.options.paging">
-           </dt-footer>
-        </div>`
+                  >
+                  </dt-size-selector>
+              </div>
+              <dt-header options="dt.options"
+                on-checkbox-change="dt.onHeaderCheckboxChange()"
+                columns="dt.columnsByPin"
+                column-widths="dt.columnWidths"
+                ng-if="dt.options.headerHeight"
+                on-resize="dt.onResize(column, width)"
+                selected="dt.headerSelected"
+                on-header-checkbox-changed="dt.onHeaderCheckboxChanged(isChecked)"
+                on-sort="dt.onSorted()">
+              </dt-header>
+              <dt-body rows="dt.rows"
+               on-rows-change="dt.onRowsChange()"
+               selected="dt.selected"
+               expanded="dt.expanded"
+               columns="dt.columnsByPin"
+               on-select="dt.onSelected(rows)"
+               on-row-click="dt.onRowClicked(row)"
+               on-row-dbl-click="dt.onRowDblClicked(row)"
+               column-widths="dt.columnWidths"
+               options="dt.options"
+               on-page="dt.onBodyPage(offset, size)"
+               on-tree-toggle="dt.onTreeToggled(row, cell)"
+               on-unselect="dt.onUnselected(rows)"
+                     >
+              </dt-body>
+              <dt-footer ng-if="dt.options.footerHeight"
+                 ng-style="{ height: dt.options.footerHeight + 'px' }"
+                 on-page="dt.onFooterPage(offset, size)"
+                 paging="dt.options.paging">
+              </dt-footer>
+         </div>
+         `
     },
     compile: function(tElem, tAttrs){
       return {
@@ -3123,7 +3103,6 @@ var dataTable = angular
   .directive('dtCell', CellDirective)
   .directive('dtFooter', FooterDirective)
   .directive('dtPager', PagerDirective)
-  .directive('dtAction', ActionDirective)
   .directive('dtSizeSelector', SizeSelectorDirective)
 
 export default dataTable;

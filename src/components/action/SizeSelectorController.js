@@ -6,7 +6,6 @@ export class SizeSelectorController {
 
     onChange() {
         this.options.paging.offset = 0
-
         this.onPage({
           offset: this.options.paging.offset,
           size: this.options.paging.size
