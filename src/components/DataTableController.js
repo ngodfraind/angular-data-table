@@ -216,6 +216,18 @@ export class DataTableController {
   }
 
   /**
+   * Invoked when the body triggers a page change.
+   * @param  {offset}
+   * @param  {size}
+   */
+  onSizePage(offset, size){
+    this.onPage({
+      offset: offset,
+      size: size
+    });
+  }
+
+  /**
    * Invoked when the footer triggers a page change.
    * @param  {offset}
    * @param  {size}
@@ -255,8 +267,8 @@ export class DataTableController {
   isAllRowsSelected(){
     if (!this.selected || !this.rows) return false;
 
-    return this.options.paging.count ? 
-      this.selected.length === parseInt(this.options.paging.count): 
+    return this.options.paging.count ?
+      this.selected.length === parseInt(this.options.paging.count):
       this.selected.length === this.rows.length;
   }
 

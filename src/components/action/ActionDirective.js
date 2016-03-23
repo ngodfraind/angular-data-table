@@ -1,17 +1,18 @@
 import { ActionController } from './ActionController';
 
-export function SizeSelectorDirective(){
+export function ActionDirective(){
   return {
     restrict: 'E',
     controller: ActionController,
     controllerAs: 'action',
     scope: true,
     bindToController: {
-      size: '='
+      options: '='
     },
     template:
       `<dt-size-selector
-        size="action.size"
+        ng-if="dt.options.sizes.length > 1"
+        options="dt.options"
       >
       </dt-size-selector>`,
     replace: true

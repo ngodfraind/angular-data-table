@@ -32,16 +32,22 @@ export function DataTableDirective($window, $timeout, $parse){
           id = ObjectId();
       DataTableService.saveColumns(id, columns);
 
-      return `<div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
+      return `
+          <div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
+          <dt-action
+                    options="dt.options"
+                    on-page="dt.onSizePage(offset, size)"
+          >
+          </dt-action>
           <dt-header options="dt.options"
-                     on-checkbox-change="dt.onHeaderCheckboxChange()"
-                     columns="dt.columnsByPin"
-                     column-widths="dt.columnWidths"
-                     ng-if="dt.options.headerHeight"
-                     on-resize="dt.onResize(column, width)"
-                     selected="dt.headerSelected"
-                     on-header-checkbox-changed="dt.onHeaderCheckboxChanged(isChecked)"
-                     on-sort="dt.onSorted()">
+                    on-checkbox-change="dt.onHeaderCheckboxChange()"
+                    columns="dt.columnsByPin"
+                    column-widths="dt.columnWidths"
+                    ng-if="dt.options.headerHeight"
+                    on-resize="dt.onResize(column, width)"
+                    selected="dt.headerSelected"
+                    on-header-checkbox-changed="dt.onHeaderCheckboxChanged(isChecked)"
+                    on-sort="dt.onSorted()">
           </dt-header>
           <dt-body rows="dt.rows"
                    on-rows-change="dt.onRowsChange()"

@@ -37,6 +37,69 @@
   }
 }());
 
+class SizeSelectorController {
+    constructor() {
+    }
+
+    onChange() {
+        console.log(this.options.paging)
+        this.options.paging.offset = 0
+
+        this.onPage({
+          offset: this.options.paging.offset,
+          size: this.options.paging.size
+      });
+    }
+}
+
+function SizeSelectorDirective() {
+  return {
+    restrict: 'E',
+    controller: SizeSelectorController,
+    controllerAs: 'size',
+    scope: true,
+    bindToController: {
+      options: '=',
+      onPage: '&'
+    },
+    template: `
+      <select
+        ng-change="size.onChange()"
+        ng-model="size.options.paging.size"
+        ng-init="size.options.paging.size"
+      >
+        <option ng-repeat="el in size.options.sizes" ng-value="el"> {{ el }} </option>
+      </select>
+      `,
+    replace: true
+  }
+}
+
+class ActionController {
+    constructor() {
+        console.log(this.options.sizes)
+    }
+}
+
+function ActionDirective(){
+  return {
+    restrict: 'E',
+    controller: ActionController,
+    controllerAs: 'action',
+    scope: true,
+    bindToController: {
+      options: '='
+    },
+    template:
+      `<dt-size-selector
+        ng-if="dt.options.sizes.length > 1"
+        options="dt.options"
+      >
+      </dt-size-selector>`,
+    replace: true
+  };
+}
+
 class PagerController {
 
   /**
@@ -2784,6 +2847,18 @@ class DataTableController {
   }
 
   /**
+   * Invoked when the body triggers a page change.
+   * @param  {offset}
+   * @param  {size}
+   */
+  onSizePage(offset, size){
+    this.onPage({
+      offset: offset,
+      size: size
+    });
+  }
+
+  /**
    * Invoked when the footer triggers a page change.
    * @param  {offset}
    * @param  {size}
@@ -2823,8 +2898,8 @@ class DataTableController {
   isAllRowsSelected(){
     if (!this.selected || !this.rows) return false;
 
-    return this.options.paging.count ? 
-      this.selected.length === parseInt(this.options.paging.count): 
+    return this.options.paging.count ?
+      this.selected.length === parseInt(this.options.paging.count):
       this.selected.length === this.rows.length;
   }
 
@@ -2938,16 +3013,22 @@ function DataTableDirective($window, $timeout, $parse){
           id = ObjectId();
       DataTableService.saveColumns(id, columns);
 
-      return `<div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
+      return `
+          <div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
+          <dt-action
+                    options="dt.options"
+                    on-page="dt.onSizePage(offset, size)"
+          >
+          </dt-action>
           <dt-header options="dt.options"
-                     on-checkbox-change="dt.onHeaderCheckboxChange()"
-                     columns="dt.columnsByPin"
-                     column-widths="dt.columnWidths"
-                     ng-if="dt.options.headerHeight"
-                     on-resize="dt.onResize(column, width)"
-                     selected="dt.headerSelected"
-                     on-header-checkbox-changed="dt.onHeaderCheckboxChanged(isChecked)"
-                     on-sort="dt.onSorted()">
+                    on-checkbox-change="dt.onHeaderCheckboxChange()"
+                    columns="dt.columnsByPin"
+                    column-widths="dt.columnWidths"
+                    ng-if="dt.options.headerHeight"
+                    on-resize="dt.onResize(column, width)"
+                    selected="dt.headerSelected"
+                    on-header-checkbox-changed="dt.onHeaderCheckboxChanged(isChecked)"
+                    on-sort="dt.onSorted()">
           </dt-header>
           <dt-body rows="dt.rows"
                    on-rows-change="dt.onRowsChange()"
@@ -3043,6 +3124,7 @@ function DataTableDirective($window, $timeout, $parse){
   };
 }
 
+
 var dataTable = angular
   .module('data-table', [])
   .directive('dtable', DataTableDirective)
@@ -3057,6 +3139,8 @@ var dataTable = angular
   .directive('dtGroupRow', GroupRowDirective)
   .directive('dtCell', CellDirective)
   .directive('dtFooter', FooterDirective)
-  .directive('dtPager', PagerDirective);
+  .directive('dtPager', PagerDirective)
+  .directive('dtAction', ActionDirective)
+  .directive('dtSizeSelector', SizeSelectorDirective)
 
 export default dataTable;
