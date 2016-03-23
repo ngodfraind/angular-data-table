@@ -63,14 +63,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 })();
 
 var SizeSelectorController = (function () {
-  function SizeSelectorController() {
+  SizeSelectorController.$inject = ["$scope", "$rootScope"];
+  function SizeSelectorController($scope, $rootScope) {
     _classCallCheck(this, SizeSelectorController);
+
+    this.$scope = $scope;
   }
 
   _createClass(SizeSelectorController, [{
     key: "onChange",
     value: function onChange() {
-      console.log(this.options.paging);
       this.options.paging.offset = 0;
 
       this.onPage({
@@ -88,12 +90,11 @@ function SizeSelectorDirective() {
     restrict: 'E',
     controller: SizeSelectorController,
     controllerAs: 'size',
-    scope: true,
     bindToController: {
       options: '=',
       onPage: '&'
     },
-    template: "\n      <select\n        ng-change=\"size.onChange()\"\n        ng-model=\"size.options.paging.size\"\n        ng-init=\"size.options.paging.size\"\n      >\n        <option ng-repeat=\"el in size.options.sizes\" ng-value=\"el\"> {{ el }} </option>\n      </select>\n      ",
+    template: "\n      <select\n        ng-change=\"size.onChange()\"\n        ng-model=\"size.options.paging.size\"\n        ng-init=\"size.options.paging.size\"\n        ng-options=\"value * 1 as value for (key, value) in size.options.sizes\"\n      >\n      </select>\n      ",
     replace: true
   };
 }
@@ -134,6 +135,10 @@ var PagerController = (function () {
       if (newVal !== 0 && newVal <= _this.totalPages) {
         _this.getPages(newVal);
       }
+    });
+
+    $scope.$watch('pager.size', function (newVal) {
+      _this.calcTotalPages(newVal, _this.count);
     });
 
     this.getPages(this.page || 1);
@@ -2237,6 +2242,8 @@ var DataTableController = (function () {
   }, {
     key: "onSizePage",
     value: function onSizePage(offset, size) {
+      this.rows = [];
+
       this.onPage({
         offset: offset,
         size: size
@@ -2255,8 +2262,6 @@ var DataTableController = (function () {
     value: function onHeaderCheckboxChange() {
       if (this.rows) {
         var matches = this.selected.length === this.rows.length;
-        console.log(this.selected.length);
-        console.log(this.rows.length);
 
         if (!matches) {
           var _selected;

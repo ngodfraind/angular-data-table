@@ -5,7 +5,6 @@ export function SizeSelectorDirective() {
     restrict: 'E',
     controller: SizeSelectorController,
     controllerAs: 'size',
-    scope: true,
     bindToController: {
       options: '=',
       onPage: '&'
@@ -15,8 +14,8 @@ export function SizeSelectorDirective() {
         ng-change="size.onChange()"
         ng-model="size.options.paging.size"
         ng-init="size.options.paging.size"
+        ng-options="value * 1 as value for (key, value) in size.options.sizes"
       >
-        <option ng-repeat="el in size.options.sizes" ng-value="el"> {{ el }} </option>
       </select>
       `,
     replace: true

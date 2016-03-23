@@ -1,9 +1,10 @@
 export class SizeSelectorController {
-    constructor() {
+    /*@ngInject*/
+    constructor($scope, $rootScope) {
+        this.$scope = $scope
     }
 
     onChange() {
-        console.log(this.options.paging)
         this.options.paging.offset = 0
 
         this.onPage({

@@ -221,6 +221,8 @@ export class DataTableController {
    * @param  {size}
    */
   onSizePage(offset, size){
+    //if I remove this, it's going to be broken
+    this.rows = []
     this.onPage({
       offset: offset,
       size: size
@@ -245,8 +247,6 @@ export class DataTableController {
   onHeaderCheckboxChange(){
     if(this.rows){
       var matches = this.selected.length === this.rows.length;
-      console.log(this.selected.length);
-      console.log(this.rows.length);
 
       if(!matches){
         this.selected.push(...this.rows);

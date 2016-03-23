@@ -38,11 +38,12 @@
 }());
 
 class SizeSelectorController {
-    constructor() {
+    /*@ngInject*/
+    constructor($scope, $rootScope) {
+        this.$scope = $scope
     }
 
     onChange() {
-        console.log(this.options.paging)
         this.options.paging.offset = 0
 
         this.onPage({
@@ -57,7 +58,6 @@ function SizeSelectorDirective() {
     restrict: 'E',
     controller: SizeSelectorController,
     controllerAs: 'size',
-    scope: true,
     bindToController: {
       options: '=',
       onPage: '&'
@@ -67,8 +67,8 @@ function SizeSelectorDirective() {
         ng-change="size.onChange()"
         ng-model="size.options.paging.size"
         ng-init="size.options.paging.size"
+        ng-options="value * 1 as value for (key, value) in size.options.sizes"
       >
-        <option ng-repeat="el in size.options.sizes" ng-value="el"> {{ el }} </option>
       </select>
       `,
     replace: true
@@ -104,7 +104,7 @@ class PagerController {
 
   /**
    * Creates an instance of the Pager Controller
-   * @param  {object} $scope   
+   * @param  {object} $scope
    */
   /*@ngInject*/
   constructor($scope){
@@ -118,7 +118,11 @@ class PagerController {
         this.getPages(newVal);
       }
     });
-    
+
+    $scope.$watch('pager.size', (newVal) => {
+        this.calcTotalPages(newVal, this.count)
+    })
+
     this.getPages(this.page || 1);
   }
 
@@ -133,7 +137,7 @@ class PagerController {
 
   /**
    * Select a page
-   * @param  {int} num   
+   * @param  {int} num
    */
   selectPage(num){
     if (num > 0 && num <= this.totalPages) {
@@ -170,7 +174,7 @@ class PagerController {
 
   /**
    * Determines if the pager can go forward
-   * @return {boolean}       
+   * @return {boolean}
    */
   canNext(){
     return this.page < this.totalPages;
@@ -178,11 +182,11 @@ class PagerController {
 
   /**
    * Gets the page set given the current page
-   * @param  {int} page 
+   * @param  {int} page
    */
   getPages(page) {
     var pages = [],
-        startPage = 1, 
+        startPage = 1,
         endPage = this.totalPages,
         maxSize = 5,
         isMaxSized = maxSize < this.totalPages;
@@ -200,27 +204,8 @@ class PagerController {
       });
     }
 
-    /*
-    if (isMaxSized) {
-      if (startPage > 1) {
-        pages.unshift({
-          number: startPage - 1,
-          text: '...'
-        });
-      }
-
-      if (endPage < this.totalPages) {
-        pages.push({
-          number: endPage + 1,
-          text: '...'
-        });
-      }
-    }
-    */
-
     this.pages = pages;
   }
-
 }
 
 function PagerDirective(){
@@ -2852,6 +2837,8 @@ class DataTableController {
    * @param  {size}
    */
   onSizePage(offset, size){
+    this.rows = []
+    //this.calculatePageSize()
     this.onPage({
       offset: offset,
       size: size
@@ -2876,8 +2863,6 @@ class DataTableController {
   onHeaderCheckboxChange(){
     if(this.rows){
       var matches = this.selected.length === this.rows.length;
-      console.log(this.selected.length);
-      console.log(this.rows.length);
 
       if(!matches){
         this.selected.push(...this.rows);

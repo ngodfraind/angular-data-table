@@ -2,7 +2,7 @@ export class PagerController {
 
   /**
    * Creates an instance of the Pager Controller
-   * @param  {object} $scope   
+   * @param  {object} $scope
    */
   /*@ngInject*/
   constructor($scope){
@@ -16,7 +16,11 @@ export class PagerController {
         this.getPages(newVal);
       }
     });
-    
+
+    $scope.$watch('pager.size', (newVal) => {
+        this.calcTotalPages(newVal, this.count)
+    })
+
     this.getPages(this.page || 1);
   }
 
@@ -31,7 +35,7 @@ export class PagerController {
 
   /**
    * Select a page
-   * @param  {int} num   
+   * @param  {int} num
    */
   selectPage(num){
     if (num > 0 && num <= this.totalPages) {
@@ -68,7 +72,7 @@ export class PagerController {
 
   /**
    * Determines if the pager can go forward
-   * @return {boolean}       
+   * @return {boolean}
    */
   canNext(){
     return this.page < this.totalPages;
@@ -76,11 +80,11 @@ export class PagerController {
 
   /**
    * Gets the page set given the current page
-   * @param  {int} page 
+   * @param  {int} page
    */
   getPages(page) {
     var pages = [],
-        startPage = 1, 
+        startPage = 1,
         endPage = this.totalPages,
         maxSize = 5,
         isMaxSized = maxSize < this.totalPages;
@@ -98,25 +102,6 @@ export class PagerController {
       });
     }
 
-    /*
-    if (isMaxSized) {
-      if (startPage > 1) {
-        pages.unshift({
-          number: startPage - 1,
-          text: '...'
-        });
-      }
-
-      if (endPage < this.totalPages) {
-        pages.push({
-          number: endPage + 1,
-          text: '...'
-        });
-      }
-    }
-    */
-
     this.pages = pages;
   }
-
 };
