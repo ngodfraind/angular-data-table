@@ -1,6 +1,6 @@
 export class SizeSelectorController {
     /*@ngInject*/
-    constructor($scope, $rootScope) {
+    constructor($scope) {
         this.$scope = $scope
     }
 

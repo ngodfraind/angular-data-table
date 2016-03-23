@@ -4,17 +4,17 @@ export function SizeSelectorDirective() {
   return {
     restrict: 'E',
     controller: SizeSelectorController,
-    controllerAs: 'size',
+    controllerAs: 'sizeSelector',
     bindToController: {
       options: '=',
       onPage: '&'
     },
     template: `
       <select
-        ng-change="size.onChange()"
-        ng-model="size.options.paging.size"
-        ng-init="size.options.paging.size"
-        ng-options="value * 1 as value for (key, value) in size.options.sizes"
+        ng-change="sizeSelector.onChange()"
+        ng-model="sizeSelector.options.paging.size"
+        ng-init="sizeSelector.options.paging.size"
+        ng-options="value * 1 as value for (key, value) in sizeSelector.options.sizes"
       >
       </select>
       `,

@@ -36,3 +36,4 @@ export default angular
   .directive('dtPager', PagerDirective)
   .directive('dtAction', ActionDirective)
   .directive('dtSizeSelector', SizeSelectorDirective)
+  .directive('dtColumnSelector', ColumnSelectorDirective)

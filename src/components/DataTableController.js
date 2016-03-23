@@ -221,7 +221,8 @@ export class DataTableController {
    * @param  {size}
    */
   onSizePage(offset, size){
-    //if I remove this, it's going to be broken
+    //If I remove this, it's going to be broken.
+    //But for the record, this trigger an error.
     this.rows = []
     this.onPage({
       offset: offset,

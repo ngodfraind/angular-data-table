@@ -11,10 +11,14 @@ export function ActionDirective(){
     },
     template:
       `<dt-size-selector
-        ng-if="dt.options.sizes.length > 1"
+        ng-if="dt.options.sizes"
         options="dt.options"
       >
-      </dt-size-selector>`,
+      </dt-size-selector>
+      <dt-column-selector
+       ng-if="dt.options.availableColumns"
+       options="dt.options"
+      `,
     replace: true
   };
 };
