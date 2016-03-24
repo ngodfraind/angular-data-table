@@ -17,6 +17,7 @@ import { FooterDirective } from './components/footer/FooterDirective';
 import { PagerDirective } from './components/footer/PagerDirective';
 import { ActionDirective } from './components/action/ActionDirective';
 import { SizeSelectorDirective } from './components/action/SizeSelectorDirective';
+import { ColumnSelectorDirective } from './components/action/ColumnSelectorDirective';
 
 
 export default angular

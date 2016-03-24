@@ -37,9 +37,64 @@
   }
 }());
 
+class ColumnSelectorController {
+    onClick(column) {
+        this.isChecked(column) ?
+            this.options.columns.splice(this.getColumnIndex(column), 1):
+            this.options.columns.push(column)
+    }
+
+    isChecked(column) {
+        return this.getColumnIndex(column) >= 0 ? true: false
+    }
+
+    getColumnIndex(column) {
+        let index = -1
+
+        for (let i = 0; i < this.options.columns.length; i++) {
+            if (this.options.columns[i].name == column.name) index = i
+        }
+
+        return index
+    }
+}
+
+function ColumnSelectorDirective() {
+  return {
+    restrict: 'E',
+    controller: ColumnSelectorController,
+    controllerAs: 'columnSelector',
+    bindToController: {
+      options: '='
+    },
+    template: `
+    <div class="dropdown">
+      <button
+        class="btn btn-default dropdown-toggle"
+        type="button"
+        id="dropdown-column"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="true"
+     >
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="column" style="z-index:25;">
+          <li ng-repeat="column in columnSelector.options.availableColumns">
+            <label class="dt-checkbox">
+              <input type="checkbox" ng-click="columnSelector.onClick(column)" ng-checked="columnSelector.isChecked(column)">  {{ column.name }}
+            </label>
+          </li>
+      </ul>
+    </div>
+      `,
+    replace: true
+  }
+}
+
 class SizeSelectorController {
     /*@ngInject*/
-    constructor($scope, $rootScope) {
+    constructor($scope) {
         this.$scope = $scope
     }
 
@@ -2973,14 +3028,26 @@ function DataTableDirective($window, $timeout, $parse){
 
       return `
           <div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
-              <div class="panel-body container row">
-                  <dt-size-selector
-                    ng-if="dt.options.sizes"
-                    options="dt.options"
-                    class="form-control input-sm col-sm-2"
-                    on-page="dt.onSizePage(offset, size)"
-                  >
-                  </dt-size-selector>
+              <div class="panel panel-body">
+                <div class="row">
+                  <div class="col-md-2">
+                      <dt-size-selector
+                        ng-if="dt.options.sizes"
+                        options="dt.options"
+                        class="form-control col-md-2"
+                        on-page="dt.onSizePage(offset, size)"
+                      >
+                      </dt-size-selector>
+                  </div>
+                  <div class="col-md-6">
+                      <dt-column-selector
+                        ng-if="dt.options.availableColumns"
+                        options="dt.options"
+                        class="col-md-8"
+                      >
+                      </dt-column-selector>
+                </div>
+                </hr>
               </div>
               <dt-header options="dt.options"
                 on-checkbox-change="dt.onHeaderCheckboxChange()"
@@ -3104,5 +3171,6 @@ var dataTable = angular
   .directive('dtFooter', FooterDirective)
   .directive('dtPager', PagerDirective)
   .directive('dtSizeSelector', SizeSelectorDirective)
+  .directive('dtColumnSelector', ColumnSelectorDirective)
 
 export default dataTable;

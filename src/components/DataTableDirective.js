@@ -34,14 +34,26 @@ export function DataTableDirective($window, $timeout, $parse){
 
       return `
           <div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
-              <div class="panel-body">
-                  <dt-size-selector
-                    ng-if="dt.options.sizes"
-                    options="dt.options"
-                    class="form-control input-sm col-sm-2"
-                    on-page="dt.onSizePage(offset, size)"
-                  >
-                  </dt-size-selector>
+              <div class="panel panel-body">
+                <div class="row">
+                  <div class="col-md-2">
+                      <dt-size-selector
+                        ng-if="dt.options.sizes"
+                        options="dt.options"
+                        class="form-control col-md-2"
+                        on-page="dt.onSizePage(offset, size)"
+                      >
+                      </dt-size-selector>
+                  </div>
+                  <div class="col-md-6">
+                      <dt-column-selector
+                        ng-if="dt.options.availableColumns"
+                        options="dt.options"
+                        class="col-md-8"
+                      >
+                      </dt-column-selector>
+                </div>
+                </hr>
               </div>
               <dt-header options="dt.options"
                 on-checkbox-change="dt.onHeaderCheckboxChange()"
