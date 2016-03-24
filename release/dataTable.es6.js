@@ -45,7 +45,6 @@ class SizeSelectorController {
 
     onChange() {
         this.options.paging.offset = 0
-
         this.onPage({
           offset: this.options.paging.offset,
           size: this.options.paging.size
@@ -57,47 +56,22 @@ function SizeSelectorDirective() {
   return {
     restrict: 'E',
     controller: SizeSelectorController,
-    controllerAs: 'size',
+    controllerAs: 'sizeSelector',
     bindToController: {
       options: '=',
       onPage: '&'
     },
     template: `
       <select
-        ng-change="size.onChange()"
-        ng-model="size.options.paging.size"
-        ng-init="size.options.paging.size"
-        ng-options="value * 1 as value for (key, value) in size.options.sizes"
+        ng-change="sizeSelector.onChange()"
+        ng-model="sizeSelector.options.paging.size"
+        ng-init="sizeSelector.options.paging.size"
+        ng-options="value * 1 as value for (key, value) in sizeSelector.options.sizes"
       >
       </select>
       `,
     replace: true
   }
-}
-
-class ActionController {
-    constructor() {
-        console.log(this.options.sizes)
-    }
-}
-
-function ActionDirective(){
-  return {
-    restrict: 'E',
-    controller: ActionController,
-    controllerAs: 'action',
-    scope: true,
-    bindToController: {
-      options: '='
-    },
-    template:
-      `<dt-size-selector
-        ng-if="dt.options.sizes.length > 1"
-        options="dt.options"
-      >
-      </dt-size-selector>`,
-    replace: true
-  };
 }
 
 class PagerController {
@@ -1148,7 +1122,7 @@ class BodyController{
         }
       }
     }
-    
+
     this.onRowsChange();
   }
 
@@ -1381,7 +1355,7 @@ class BodyController{
     // slice out the old rows so we don't have duplicates
     this.tempRows.splice(0, indexes.last - indexes.first);
 
-    while (rowIndex < indexes.last && rowIndex < this.count) {
+    while (rowIndex < indexes.last && rowIndex < this.count && this.tempRows.length > 0) {
       var row = temp[rowIndex];
       if(row){
         row.$$index = rowIndex;
@@ -2837,8 +2811,8 @@ class DataTableController {
    * @param  {size}
    */
   onSizePage(offset, size){
-    this.rows = []
-    //this.calculatePageSize()
+    //if I remove this, it's going to be broken
+    this.rows = undefined
     this.onPage({
       offset: offset,
       size: size
@@ -2894,7 +2868,6 @@ class DataTableController {
 
   setIsAllRowsSelected(){
     this.headerSelected = this.isAllRowsSelected();
-    console.log(this.headerSelected);
   }
 
   /**
@@ -3000,42 +2973,47 @@ function DataTableDirective($window, $timeout, $parse){
 
       return `
           <div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
-          <dt-action
+              <div class="panel-body container row">
+                  <dt-size-selector
+                    ng-if="dt.options.sizes"
                     options="dt.options"
+                    class="form-control input-sm col-sm-2"
                     on-page="dt.onSizePage(offset, size)"
-          >
-          </dt-action>
-          <dt-header options="dt.options"
-                    on-checkbox-change="dt.onHeaderCheckboxChange()"
-                    columns="dt.columnsByPin"
-                    column-widths="dt.columnWidths"
-                    ng-if="dt.options.headerHeight"
-                    on-resize="dt.onResize(column, width)"
-                    selected="dt.headerSelected"
-                    on-header-checkbox-changed="dt.onHeaderCheckboxChanged(isChecked)"
-                    on-sort="dt.onSorted()">
-          </dt-header>
-          <dt-body rows="dt.rows"
-                   on-rows-change="dt.onRowsChange()"
-                   selected="dt.selected"
-                   expanded="dt.expanded"
-                   columns="dt.columnsByPin"
-                   on-select="dt.onSelected(rows)"
-                   on-row-click="dt.onRowClicked(row)"
-                   on-row-dbl-click="dt.onRowDblClicked(row)"
-                   column-widths="dt.columnWidths"
-                   options="dt.options"
-                   on-page="dt.onBodyPage(offset, size)"
-                   on-tree-toggle="dt.onTreeToggled(row, cell)"
-                   on-unselect="dt.onUnselected(rows)"
-                 >
-           </dt-body>
-          <dt-footer ng-if="dt.options.footerHeight"
-                     ng-style="{ height: dt.options.footerHeight + 'px' }"
-                     on-page="dt.onFooterPage(offset, size)"
-                     paging="dt.options.paging">
-           </dt-footer>
-        </div>`
+                  >
+                  </dt-size-selector>
+              </div>
+              <dt-header options="dt.options"
+                on-checkbox-change="dt.onHeaderCheckboxChange()"
+                columns="dt.columnsByPin"
+                column-widths="dt.columnWidths"
+                ng-if="dt.options.headerHeight"
+                on-resize="dt.onResize(column, width)"
+                selected="dt.headerSelected"
+                on-header-checkbox-changed="dt.onHeaderCheckboxChanged(isChecked)"
+                on-sort="dt.onSorted()">
+              </dt-header>
+              <dt-body rows="dt.rows"
+               on-rows-change="dt.onRowsChange()"
+               selected="dt.selected"
+               expanded="dt.expanded"
+               columns="dt.columnsByPin"
+               on-select="dt.onSelected(rows)"
+               on-row-click="dt.onRowClicked(row)"
+               on-row-dbl-click="dt.onRowDblClicked(row)"
+               column-widths="dt.columnWidths"
+               options="dt.options"
+               on-page="dt.onBodyPage(offset, size)"
+               on-tree-toggle="dt.onTreeToggled(row, cell)"
+               on-unselect="dt.onUnselected(rows)"
+                     >
+              </dt-body>
+              <dt-footer ng-if="dt.options.footerHeight"
+                 ng-style="{ height: dt.options.footerHeight + 'px' }"
+                 on-page="dt.onFooterPage(offset, size)"
+                 paging="dt.options.paging">
+              </dt-footer>
+         </div>
+         `
     },
     compile: function(tElem, tAttrs){
       return {
@@ -3125,7 +3103,6 @@ var dataTable = angular
   .directive('dtCell', CellDirective)
   .directive('dtFooter', FooterDirective)
   .directive('dtPager', PagerDirective)
-  .directive('dtAction', ActionDirective)
   .directive('dtSizeSelector', SizeSelectorDirective)
 
 export default dataTable;

@@ -89,7 +89,7 @@ export class BodyController{
         }
       }
     }
-    
+
     this.onRowsChange();
   }
 
@@ -322,7 +322,7 @@ export class BodyController{
     // slice out the old rows so we don't have duplicates
     this.tempRows.splice(0, indexes.last - indexes.first);
 
-    while (rowIndex < indexes.last && rowIndex < this.count) {
+    while (rowIndex < indexes.last && rowIndex < this.count && this.tempRows.length > 0) {
       var row = temp[rowIndex];
       if(row){
         row.$$index = rowIndex;

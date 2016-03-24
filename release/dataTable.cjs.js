@@ -74,7 +74,6 @@ var SizeSelectorController = (function () {
     key: "onChange",
     value: function onChange() {
       this.options.paging.offset = 0;
-
       this.onPage({
         offset: this.options.paging.offset,
         size: this.options.paging.size
@@ -89,32 +88,12 @@ function SizeSelectorDirective() {
   return {
     restrict: 'E',
     controller: SizeSelectorController,
-    controllerAs: 'size',
+    controllerAs: 'sizeSelector',
     bindToController: {
       options: '=',
       onPage: '&'
     },
-    template: "\n      <select\n        ng-change=\"size.onChange()\"\n        ng-model=\"size.options.paging.size\"\n        ng-init=\"size.options.paging.size\"\n        ng-options=\"value * 1 as value for (key, value) in size.options.sizes\"\n      >\n      </select>\n      ",
-    replace: true
-  };
-}
-
-var ActionController = function ActionController() {
-  _classCallCheck(this, ActionController);
-
-  console.log(this.options.sizes);
-};
-
-function ActionDirective() {
-  return {
-    restrict: 'E',
-    controller: ActionController,
-    controllerAs: 'action',
-    scope: true,
-    bindToController: {
-      options: '='
-    },
-    template: "<dt-size-selector\n        ng-if=\"dt.options.sizes.length > 1\"\n        options=\"dt.options\"\n      >\n      </dt-size-selector>",
+    template: "\n      <select\n        ng-change=\"sizeSelector.onChange()\"\n        ng-model=\"sizeSelector.options.paging.size\"\n        ng-init=\"sizeSelector.options.paging.size\"\n        ng-options=\"value * 1 as value for (key, value) in sizeSelector.options.sizes\"\n      >\n      </select>\n      ",
     replace: true
   };
 }
@@ -1145,7 +1124,7 @@ var BodyController = (function () {
 
       this.tempRows.splice(0, indexes.last - indexes.first);
 
-      while (rowIndex < indexes.last && rowIndex < this.count) {
+      while (rowIndex < indexes.last && rowIndex < this.count && this.tempRows.length > 0) {
         var row = temp[rowIndex];
         if (row) {
           row.$$index = rowIndex;
@@ -2242,8 +2221,7 @@ var DataTableController = (function () {
   }, {
     key: "onSizePage",
     value: function onSizePage(offset, size) {
-      this.rows = [];
-
+      this.rows = undefined;
       this.onPage({
         offset: offset,
         size: size
@@ -2292,7 +2270,6 @@ var DataTableController = (function () {
     key: "setIsAllRowsSelected",
     value: function setIsAllRowsSelected() {
       this.headerSelected = this.isAllRowsSelected();
-      console.log(this.headerSelected);
     }
   }, {
     key: "onResize",
@@ -2378,7 +2355,7 @@ function DataTableDirective($window, $timeout, $parse) {
           id = ObjectId();
       DataTableService.saveColumns(id, columns);
 
-      return "\n          <div class=\"dt\" ng-class=\"dt.tableCss()\" data-column-id=\"" + id + "\">\n          <dt-action\n                    options=\"dt.options\"\n                    on-page=\"dt.onSizePage(offset, size)\"\n          >\n          </dt-action>\n          <dt-header options=\"dt.options\"\n                    on-checkbox-change=\"dt.onHeaderCheckboxChange()\"\n                    columns=\"dt.columnsByPin\"\n                    column-widths=\"dt.columnWidths\"\n                    ng-if=\"dt.options.headerHeight\"\n                    on-resize=\"dt.onResize(column, width)\"\n                    selected=\"dt.headerSelected\"\n                    on-header-checkbox-changed=\"dt.onHeaderCheckboxChanged(isChecked)\"\n                    on-sort=\"dt.onSorted()\">\n          </dt-header>\n          <dt-body rows=\"dt.rows\"\n                   on-rows-change=\"dt.onRowsChange()\"\n                   selected=\"dt.selected\"\n                   expanded=\"dt.expanded\"\n                   columns=\"dt.columnsByPin\"\n                   on-select=\"dt.onSelected(rows)\"\n                   on-row-click=\"dt.onRowClicked(row)\"\n                   on-row-dbl-click=\"dt.onRowDblClicked(row)\"\n                   column-widths=\"dt.columnWidths\"\n                   options=\"dt.options\"\n                   on-page=\"dt.onBodyPage(offset, size)\"\n                   on-tree-toggle=\"dt.onTreeToggled(row, cell)\"\n                   on-unselect=\"dt.onUnselected(rows)\"\n                 >\n           </dt-body>\n          <dt-footer ng-if=\"dt.options.footerHeight\"\n                     ng-style=\"{ height: dt.options.footerHeight + 'px' }\"\n                     on-page=\"dt.onFooterPage(offset, size)\"\n                     paging=\"dt.options.paging\">\n           </dt-footer>\n        </div>";
+      return "\n          <div class=\"dt\" ng-class=\"dt.tableCss()\" data-column-id=\"" + id + "\">\n              <div class=\"panel-body container row\">\n                  <dt-size-selector\n                    ng-if=\"dt.options.sizes\"\n                    options=\"dt.options\"\n                    class=\"form-control input-sm col-sm-2\"\n                    on-page=\"dt.onSizePage(offset, size)\"\n                  >\n                  </dt-size-selector>\n              </div>\n              <dt-header options=\"dt.options\"\n                on-checkbox-change=\"dt.onHeaderCheckboxChange()\"\n                columns=\"dt.columnsByPin\"\n                column-widths=\"dt.columnWidths\"\n                ng-if=\"dt.options.headerHeight\"\n                on-resize=\"dt.onResize(column, width)\"\n                selected=\"dt.headerSelected\"\n                on-header-checkbox-changed=\"dt.onHeaderCheckboxChanged(isChecked)\"\n                on-sort=\"dt.onSorted()\">\n              </dt-header>\n              <dt-body rows=\"dt.rows\"\n               on-rows-change=\"dt.onRowsChange()\"\n               selected=\"dt.selected\"\n               expanded=\"dt.expanded\"\n               columns=\"dt.columnsByPin\"\n               on-select=\"dt.onSelected(rows)\"\n               on-row-click=\"dt.onRowClicked(row)\"\n               on-row-dbl-click=\"dt.onRowDblClicked(row)\"\n               column-widths=\"dt.columnWidths\"\n               options=\"dt.options\"\n               on-page=\"dt.onBodyPage(offset, size)\"\n               on-tree-toggle=\"dt.onTreeToggled(row, cell)\"\n               on-unselect=\"dt.onUnselected(rows)\"\n                     >\n              </dt-body>\n              <dt-footer ng-if=\"dt.options.footerHeight\"\n                 ng-style=\"{ height: dt.options.footerHeight + 'px' }\"\n                 on-page=\"dt.onFooterPage(offset, size)\"\n                 paging=\"dt.options.paging\">\n              </dt-footer>\n         </div>\n         ";
     },
     compile: function compile(tElem, tAttrs) {
       return {
@@ -2439,7 +2416,7 @@ function DataTableDirective($window, $timeout, $parse) {
   };
 }
 
-var dataTable = angular.module('data-table', []).directive('dtable', DataTableDirective).directive('resizable', ResizableDirective).directive('sortable', SortableDirective).directive('dtHeader', HeaderDirective).directive('dtHeaderCell', HeaderCellDirective).directive('dtBody', BodyDirective).directive('dtScroller', ScrollerDirective).directive('dtSeletion', SelectionDirective).directive('dtRow', RowDirective).directive('dtGroupRow', GroupRowDirective).directive('dtCell', CellDirective).directive('dtFooter', FooterDirective).directive('dtPager', PagerDirective).directive('dtAction', ActionDirective).directive('dtSizeSelector', SizeSelectorDirective);
+var dataTable = angular.module('data-table', []).directive('dtable', DataTableDirective).directive('resizable', ResizableDirective).directive('sortable', SortableDirective).directive('dtHeader', HeaderDirective).directive('dtHeaderCell', HeaderCellDirective).directive('dtBody', BodyDirective).directive('dtScroller', ScrollerDirective).directive('dtSeletion', SelectionDirective).directive('dtRow', RowDirective).directive('dtGroupRow', GroupRowDirective).directive('dtCell', CellDirective).directive('dtFooter', FooterDirective).directive('dtPager', PagerDirective).directive('dtSizeSelector', SizeSelectorDirective);
 
 exports["default"] = dataTable;
 module.exports = exports["default"];
