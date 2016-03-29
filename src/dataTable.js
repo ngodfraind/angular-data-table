@@ -15,7 +15,6 @@ import { GroupRowDirective } from './components/body/GroupRowDirective';
 import { CellDirective } from './components/body/CellDirective';
 import { FooterDirective } from './components/footer/FooterDirective';
 import { PagerDirective } from './components/footer/PagerDirective';
-import { ActionDirective } from './components/action/ActionDirective';
 import { SizeSelectorDirective } from './components/action/SizeSelectorDirective';
 import { ColumnSelectorDirective } from './components/action/ColumnSelectorDirective';
 

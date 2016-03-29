@@ -34,8 +34,8 @@ export function DataTableDirective($window, $timeout, $parse){
 
       return `
           <div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
-              <div class="panel panel-body">
-                <div class="row">
+              <div ng-class="{'panel': true, 'panel-body': true}">
+                <div ng-class='row'>
                   <div class="col-md-2">
                       <dt-size-selector
                         ng-if="dt.options.sizes"
