@@ -15,6 +15,9 @@ import { GroupRowDirective } from './components/body/GroupRowDirective';
 import { CellDirective } from './components/body/CellDirective';
 import { FooterDirective } from './components/footer/FooterDirective';
 import { PagerDirective } from './components/footer/PagerDirective';
+import { SizeSelectorDirective } from './components/action/SizeSelectorDirective';
+import { ColumnSelectorDirective } from './components/action/ColumnSelectorDirective';
+
 
 export default angular
   .module('data-table', [])
@@ -30,4 +33,6 @@ export default angular
   .directive('dtGroupRow', GroupRowDirective)
   .directive('dtCell', CellDirective)
   .directive('dtFooter', FooterDirective)
-  .directive('dtPager', PagerDirective);
+  .directive('dtPager', PagerDirective)
+  .directive('dtSizeSelector', SizeSelectorDirective)
+  .directive('dtColumnSelector', ColumnSelectorDirective)

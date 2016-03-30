@@ -216,6 +216,20 @@ export class DataTableController {
   }
 
   /**
+   * Invoked when the body triggers a page change.
+   * @param  {offset}
+   * @param  {size}
+   */
+  onSizePage(offset, size){
+    //if I remove this, it's going to be broken
+    this.rows = undefined
+    this.onPage({
+      offset: offset,
+      size: size
+    });
+  }
+
+  /**
    * Invoked when the footer triggers a page change.
    * @param  {offset}
    * @param  {size}
@@ -233,8 +247,6 @@ export class DataTableController {
   onHeaderCheckboxChange(){
     if(this.rows){
       var matches = this.selected.length === this.rows.length;
-      console.log(this.selected.length);
-      console.log(this.rows.length);
 
       if(!matches){
         this.selected.push(...this.rows);
@@ -255,8 +267,8 @@ export class DataTableController {
   isAllRowsSelected(){
     if (!this.selected || !this.rows) return false;
 
-    return this.options.paging.count ? 
-      this.selected.length === parseInt(this.options.paging.count): 
+    return this.options.paging.count ?
+      this.selected.length === parseInt(this.options.paging.count):
       this.selected.length === this.rows.length;
   }
 
@@ -266,7 +278,6 @@ export class DataTableController {
 
   setIsAllRowsSelected(){
     this.headerSelected = this.isAllRowsSelected();
-    console.log(this.headerSelected);
   }
 
   /**
