@@ -5,7 +5,7 @@ System.config({
   babelOptions: {
     "optional": [
       "runtime"
-    ]
+  ],
   },
   paths: {
     "*": "dist/*.js",

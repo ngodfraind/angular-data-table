@@ -1684,7 +1684,7 @@ class HeaderCellController{
       'resizable': this.column.resizable
     };
 
-    if(this.column.heaerClassName){
+    if(this.column.headerClassName){
       cls[this.column.headerClassName] = true;
     }
 
@@ -2518,7 +2518,7 @@ const ColumnDefaults = {
   className: undefined,
 
   // header cell css class name
-  heaerClassName: undefined,
+  headerClassName: undefined,
 
   // The grow factor relative to other columns. Same as the flex-grow
   // API from http://www.w3.org/TR/css3-flexbox/. Basically,
