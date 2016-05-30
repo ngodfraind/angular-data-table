@@ -851,7 +851,7 @@ class SelectionController {
 
     this.body.onRowClick({ row: row });
   }
-  
+
   /**
    * Handler for the row double click event
    * @param  {object} event
@@ -890,11 +890,18 @@ class SelectionController {
         if(isShiftKeyDown){
           this.selectRowsBetween(index, row);
         } else {
-          var idx = this.selected.indexOf(row);
-          if(idx > -1){
-            //this must be before the splice otherwise it'll already be removed.
-            this.body.onUnselect({rows: [ row ] });
-            this.selected.splice(idx, 1);
+            let idxs = []
+          //we need to compare these objects without reference, so we use stringify. This is slow & dirty. Waiting for a better way
+           this.selected.forEach((el, i) => {
+               if (JSON.stringify(el) === JSON.stringify(row)) idxs.push(i)
+           })
+
+          if(idxs.length > 0) {
+            idxs.forEach(idx => {
+                this.selected.splice(idx, 1);
+                this.body.onUnselect({rows: [ row ] });
+            })
+
           } else {
             if(this.options.multiSelectOnShift && this.selected.length === 1) {
               this.selected.splice(0, 1);
@@ -2858,6 +2865,8 @@ class DataTableController {
       offset: offset,
       size: size
     });
+
+    this.setIsAllRowsSelected();
   }
 
   /**
@@ -2891,14 +2900,24 @@ class DataTableController {
    */
   onHeaderCheckboxChange(){
     if(this.rows){
-      var matches = this.selected.length === this.rows.length;
+      let isChecked = this.isAllRowsSelected()
 
-      if(!matches){
-        this.selected.push(...this.rows);
-        var isChecked = true;
+      if(!isChecked){
+        //get the current selection for the pager
+        const offset = this.options.paging.offset
+        const size = this.options.paging.size
+        const sliced = this.rows.slice(offset * size, offset * size + size)
+
+        //only push what's not already here
+        const filtered = sliced.filter((elem) => {
+            return this.selected.indexOf(elem) < 0
+        })
+
+        this.selected.push(...filtered);
+        isChecked = true;
       } else {
         this.selected.splice(0, this.rows.length);
-        var isChecked = false;
+        isChecked = false;
       }
 
       this.onHeaderCheckboxChanged({isChecked: isChecked});
@@ -2911,10 +2930,15 @@ class DataTableController {
    */
   isAllRowsSelected(){
     if (!this.selected || !this.rows) return false;
+    const offset = this.options.paging.offset
+    const size = this.options.paging.size
+    const sliced = this.rows.slice(offset * size, offset * size + size)
 
-    return this.options.paging.count ?
-      this.selected.length === parseInt(this.options.paging.count):
-      this.selected.length === this.rows.length;
+    const filtered = sliced.filter((row) => {
+        return  JSON.stringify(this.selected).indexOf(JSON.stringify(row)) > -1;
+    })
+
+    return filtered.length === sliced.length
   }
 
   onRowsChange() {
@@ -2922,7 +2946,8 @@ class DataTableController {
   }
 
   setIsAllRowsSelected(){
-    this.headerSelected = this.isAllRowsSelected();
+    const headerSelect = this.isAllRowsSelected()
+    this.headerSelected = headerSelect
   }
 
   /**
@@ -2983,6 +3008,8 @@ class DataTableController {
       row: row,
       selected: selected
     });
+
+    this.setIsAllRowsSelected();
   }
 
   /**

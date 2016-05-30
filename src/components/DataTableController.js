@@ -213,6 +213,8 @@ export class DataTableController {
       offset: offset,
       size: size
     });
+
+    this.setIsAllRowsSelected();
   }
 
   /**
@@ -246,14 +248,24 @@ export class DataTableController {
    */
   onHeaderCheckboxChange(){
     if(this.rows){
-      var matches = this.selected.length === this.rows.length;
+      let isChecked = this.isAllRowsSelected()
 
-      if(!matches){
-        this.selected.push(...this.rows);
-        var isChecked = true;
+      if(!isChecked){
+        //get the current selection for the pager
+        const offset = this.options.paging.offset
+        const size = this.options.paging.size
+        const sliced = this.rows.slice(offset * size, offset * size + size)
+
+        //only push what's not already here
+        const filtered = sliced.filter((elem) => {
+            return this.selected.indexOf(elem) < 0
+        })
+
+        this.selected.push(...filtered);
+        isChecked = true;
       } else {
         this.selected.splice(0, this.rows.length);
-        var isChecked = false;
+        isChecked = false;
       }
 
       this.onHeaderCheckboxChanged({isChecked: isChecked});
@@ -266,10 +278,15 @@ export class DataTableController {
    */
   isAllRowsSelected(){
     if (!this.selected || !this.rows) return false;
+    const offset = this.options.paging.offset
+    const size = this.options.paging.size
+    const sliced = this.rows.slice(offset * size, offset * size + size)
 
-    return this.options.paging.count ?
-      this.selected.length === parseInt(this.options.paging.count):
-      this.selected.length === this.rows.length;
+    const filtered = sliced.filter((row) => {
+        return  JSON.stringify(this.selected).indexOf(JSON.stringify(row)) > -1;
+    })
+
+    return filtered.length === sliced.length
   }
 
   onRowsChange() {
@@ -277,7 +294,8 @@ export class DataTableController {
   }
 
   setIsAllRowsSelected(){
-    this.headerSelected = this.isAllRowsSelected();
+    const headerSelect = this.isAllRowsSelected()
+    this.headerSelected = headerSelect
   }
 
   /**
@@ -338,6 +356,8 @@ export class DataTableController {
       row: row,
       selected: selected
     });
+
+    this.setIsAllRowsSelected();
   }
 
   /**

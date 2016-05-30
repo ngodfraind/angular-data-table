@@ -49,7 +49,7 @@ export class SelectionController {
 
     this.body.onRowClick({ row: row });
   }
-  
+
   /**
    * Handler for the row double click event
    * @param  {object} event
@@ -88,11 +88,18 @@ export class SelectionController {
         if(isShiftKeyDown){
           this.selectRowsBetween(index, row);
         } else {
-          var idx = this.selected.indexOf(row);
-          if(idx > -1){
-            //this must be before the splice otherwise it'll already be removed.
-            this.body.onUnselect({rows: [ row ] });
-            this.selected.splice(idx, 1);
+            let idxs = []
+          //we need to compare these objects without reference, so we use stringify. This is slow & dirty. Waiting for a better way
+           this.selected.forEach((el, i) => {
+               if (JSON.stringify(el) === JSON.stringify(row)) idxs.push(i)
+           })
+
+          if(idxs.length > 0) {
+            idxs.forEach(idx => {
+                this.selected.splice(idx, 1);
+                this.body.onUnselect({rows: [ row ] });
+            })
+
           } else {
             if(this.options.multiSelectOnShift && this.selected.length === 1) {
               this.selected.splice(0, 1);
